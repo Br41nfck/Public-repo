@@ -1,0 +1,12 @@
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\Graphicx.csproj.AssemblyReference.cache
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\Graphicx.csproj.SuggestedBindingRedirects.cache
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\Graphicx.csproj.GenerateResource.cache
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\Graphicx.csproj.CoreCompileInputs.cache
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\GraphicX.About.resources
+C:\Users\KneDL\Downloads\GraphicX\bin\Debug\GraphicX.exe.config
+C:\Users\KneDL\Downloads\GraphicX\bin\Debug\GraphicX.exe
+C:\Users\KneDL\Downloads\GraphicX\bin\Debug\GraphicX.pdb
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\GraphicX.Properties.Resources.resources
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\GraphicX.exe
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\GraphicX.pdb
+C:\Users\KneDL\Downloads\GraphicX\obj\Debug\GraphicX.Main.resources
