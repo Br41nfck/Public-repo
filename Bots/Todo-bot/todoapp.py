@@ -1,5 +1,11 @@
 # Import external files
 from config import TOKEN, DB, USER, PASS, HOST, TBNAME
+from telebot import *
+import psycopg2
+from loguru import logger
+
+# REPLACE 'COLUMN_NAME' on your column
+
 # You can describe these variables here or in another file.
 # TOKEN - get your token here: https://telegram.me/BotFather
 # DB - name of your DataBase
@@ -7,9 +13,8 @@ from config import TOKEN, DB, USER, PASS, HOST, TBNAME
 # Pass - pass in PostgreSQL to database
 # Host - where located your DB
 # TBNAME - name of your DB
-from telebot import *
-import psycopg2
-from loguru import logger
+
+COLUMN_NAME = "tasks"
 
 # Logger
 logger.add("log.json",
@@ -35,7 +40,7 @@ connection.autocommit = True
 bot = TeleBot(TOKEN)
 
 
-class COFFEE:
+class TODOAPP:
 
     def __init__(self):
         pass
@@ -73,7 +78,7 @@ def add_task(message):
         text = msg.split(' ')
         date = text[1]
         info = str(' '.join(text[2:]))
-        cursor.execute(f"INSERT INTO {TBNAME} (tasks, dates) values ('{info}', '{date}')")
+        cursor.execute(f"INSERT INTO {TBNAME} ({COLUMN_NAME}) values ('{info}', '{date}')")
         bot.send_message(message.chat.id, f"Task '{info}' successfully added!")
 
     except Exception as e:
@@ -92,12 +97,12 @@ def edit_task_and_date(message):
         old_task = text[2]
         date = text[3]
         task = str(' '.join(text[4:]))
-        cursor.execute(f"SELECT tasks FROM {TBNAME} WHERE tasks = '{old_task}' and dates = '{old_date}'")
+        cursor.execute(f"SELECT {COLUMN_NAME} FROM {TBNAME} WHERE {COLUMN_NAME} = '{old_task}' and {COLUMN_NAME} = '{old_date}'")
         res = cursor.fetchall()
         if not res:
             bot.send_message(message.chat.id, f"Not found task '{old_task}' and/or date '{old_date}'")
         else:
-            cursor.execute(f"UPDATE {TBNAME} SET tasks = '{task}', dates = '{date}' WHERE tasks = '{old_task}' AND dates = '{old_date}'")
+            cursor.execute(f"UPDATE {TBNAME} SET {COLUMN_NAME} = '{task}', {COLUMN_NAME} = '{date}' WHERE {COLUMN_NAME} = '{old_task}' AND {COLUMN_NAME} = '{old_date}'")
             bot.send_message(message.chat.id, "Task successfully updated!")
 
     except Exception as e:
@@ -113,12 +118,12 @@ def delete_task(message):
         msg = message.text
         text = msg.split(' ')
         task = ' '.join(text[1:])
-        cursor.execute(f"SELECT tasks FROM {TBNAME} WHERE tasks = '{task}'")
+        cursor.execute(f"SELECT {COLUMN_NAME} FROM {TBNAME} WHERE {COLUMN_NAME} = '{task}'")
         res = cursor.fetchall()
         if not res:
             bot.send_message(message.chat.id, f"Task '{task}' isn't found and can't be removed!")
         else:
-            cursor.execute(f"DELETE FROM {TBNAME} WHERE tasks = '{task}'")
+            cursor.execute(f"DELETE FROM {TBNAME} WHERE {COLUMN_NAME} = '{task}'")
             bot.send_message(message.chat.id, f"Task '{task}' successfully deleted!")
 
     except Exception as e:
@@ -135,12 +140,14 @@ def find_task_by_name(message):
         msg = message.text
         text = msg.split(' ')
         task = ' '.join(text[1:])
-        cursor.execute(f"SELECT tasks FROM {TBNAME} WHERE tasks = '{task}'")
+        cursor.execute(f"SELECT * FROM {TBNAME} WHERE {COLUMN_NAME} = '{task}'")
         res = cursor.fetchall()
+        print(res)
         if not res:
             bot.send_message(message.chat.id, f"Task by name '{task}' not found!")
         else:
-            founded = ''.join([str(i[0]) + '\n' for i in res])
+            founded = ''.join([str(i[1]) + ' - ' + str(i[2]) + '\n' for i in res])
+
             bot.send_message(message.chat.id, founded)
 
     except Exception as e:
@@ -155,7 +162,7 @@ def list_tasks_on_day(message):
     try:
         msg = message.text
         text = msg.split(' ')
-        cursor.execute(f"SELECT tasks FROM {TBNAME} WHERE dates = '{text[1]}'")
+        cursor.execute(f"SELECT {COLUMN_NAME} FROM {TBNAME} WHERE {COLUMN_NAME} = '{text[1]}'")
         res = cursor.fetchall()
         if not res:
             bot.send_message(message.chat.id, "No tasks on this day")
@@ -176,7 +183,7 @@ def list_tasks_on_day(message):
 def today_tasks(message):
     try:
         today = datetime.today()
-        cursor.execute(f"SELECT tasks FROM {TBNAME} where dates = '{today}'")
+        cursor.execute(f"SELECT {COLUMN_NAME} FROM {TBNAME} where {COLUMN_NAME} = '{today}'")
         res = cursor.fetchall()
         if not res:
             bot.send_message(message.chat.id, "No today tasks")
@@ -195,18 +202,36 @@ def today_tasks(message):
 @bot.message_handler(commands=['all'])
 def list_all_tasks(message):
     try:
-        cursor.execute(f"SELECT tasks, dates FROM {TBNAME}")
+        cursor.execute(f"SELECT {COLUMN_NAME}, {COLUMN_NAME} FROM {TBNAME}")
         res = cursor.fetchall()
         if not res:
             bot.send_message(message.chat.id, "List of tasks is empty!")
         else:
-            tasks = ''.join([str(i[0]) + '\n' for i in res])
+            tasks = ''.join([str(i[0]) + ' - ' + str(i[1]) + '\n' for i in res])
             # FIXME: GET TASKS ON EVERY DATE
             bot.reply_to(message, tasks)
 
     except Exception as e:
         print(e)
         bot.reply_to(message, f"Something went wrong! In functon {list_all_tasks.__name__}")
+        logger.exception(e)
+
+
+# Sort By - dates, tasks
+@bot.message_handler(commands=['sort'])
+def sort_by(message):
+    try:
+        msg = message.text
+        txt = msg.split(' ')
+        cursor.execute(f"SELECT * FROM {TBNAME} ORDER BY {txt[1]}")
+        res = cursor.fetchall()
+        ans = ''.join([str(i[1]) + ' - ' + str(i[2]) + '\n' for i in res])
+        print(ans)
+        bot.send_message(message.chat.id, ans)
+
+    except Exception as e:
+        print(e)
+        bot.reply_to(message, f"Something went wrong! In functon {sort_by.__name__}")
         logger.exception(e)
 
 
