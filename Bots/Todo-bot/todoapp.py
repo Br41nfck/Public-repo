@@ -60,7 +60,7 @@ def help_msg(message):
                                           "/help    - get help info\n"  # WORK √
                                           "/list    - list task on day\n"  # WORK √
                                           "/today   - list tasks on today\n"  # WORK √
-                                          "/sort    - sort by date or task\n"  # NOT REALIZED x
+                                          "/sort    - sort by date or task\n"  #  WORK √
                                           "/deadline - list tasks with a date approaching\n"  # NOT REALIZED x
                          )
 
