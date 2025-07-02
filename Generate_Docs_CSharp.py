@@ -111,7 +111,7 @@ def write_index_html(docs_dir, file_links):
         'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
     last_modified = f'{dt.day} {months[dt.month]} {dt.year} г. {dt:%H:%M:%S}'
     with open(os.path.join(docs_dir, 'index.html'), 'w', encoding='utf-8') as f:
-        f.write('<h1>Документация по Автотесту</h1>\n')
+        f.write('<h1>Документация по проекту</h1>\n')
         f.write(f'<p><em>Последнее изменение файла: {last_modified}</em></p>\n')
         f.write('<ul>')
         for base, html_name in file_links:
@@ -131,7 +131,7 @@ def main():
         file_links.append((os.path.basename(cs_file), html_name))
     file_links.sort(key=lambda x: x[0].lower())  # сортировка по имени файла
     write_index_html(DOCS_DIR, file_links)
-    print(f'Документация по Автотесту сгенерирована в папку {DOCS_DIR}')
+    print(f'Документация по проекту сгенерирована в папку {DOCS_DIR}')
 
 if __name__ == '__main__':
     main()
