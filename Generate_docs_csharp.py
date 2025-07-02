@@ -6,7 +6,7 @@
 # Дата: 02.07.2025                                                                                          #
 # How-to-Use:                                                                                               #
 # 1) Скопировать файл в папку с .cs-файлами                                                                 #
-# 2) 3апустить команду (в консоли или cmd) python Generate_Docs.py                                          #
+# 2) 3апустить команду (в консоли или cmd) python Generate_docs_csharp.py                                   #
 # HTML-файлы будут находиться в /docs в директории проекта (DOCS_DIR можно заменить на собственную)         #
 # index.html - основной файл для перемещения по файлам документации                                         #
 #############################################################################################################
@@ -238,7 +238,7 @@ def write_index_html(docs_dir, file_links):
     last_modified = f'{dt.day} {months[dt.month]} {dt.year} г. {dt:%H:%M:%S}'
     with open(os.path.join(docs_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write('<!DOCTYPE html>\n<html lang="ru">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<link rel="icon" href="data:,">\n<link rel="stylesheet" href="style.css">\n')
-        f.write('<h1>Документация по Автотесту</h1>\n')
+        f.write('<h1>Документация по проекту</h1>\n')
         f.write(f'<p><em>Последнее изменение файла: {last_modified}</em></p>\n')
         
         # Поиск по файлам
@@ -274,7 +274,7 @@ def main():
             file_links.append((os.path.basename(cs_file), html_name))
     file_links.sort(key=lambda x: x[0].lower())
     write_index_html(DOCS_DIR, file_links)
-    print(f'Документация по Автотесту сгенерирована в папку {DOCS_DIR}')
+    print(f'Документация по проекту сгенерирована в папку {DOCS_DIR}')
 
 if __name__ == '__main__':
     main()
